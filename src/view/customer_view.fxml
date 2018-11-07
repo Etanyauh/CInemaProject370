@@ -26,10 +26,10 @@
 <?import java.lang.Double?>
 <?import javafx.scene.layout.GridPane?>
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" tabClosingPolicy="UNAVAILABLE" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="controller.ComposeController" alignment="TOP_CENTER">
+      fx:controller="controller.CustomerController" alignment="TOP_CENTER">
     <fx:define>
         <Double fx:id="xHeight" fx:value="200" />
-    </fx:define>
+   </fx:define>
    <tabs>
    <Tab text="Movies">
    <content>
@@ -39,12 +39,12 @@
    <Hbox>
    <TableView fx:id="movies_table" layoutY="-2.0" prefHeight="930.0" prefWidth="250.0" alignment="CENTER_LEFT" >
        <columns>
-           <TableColumn fx:id="inbox_from" maxWidth="100.0" minWidth="50.0" prefWidth="150.0" text=" From ">
+           <TableColumn fx:id="movoie_name" maxWidth="150.0" minWidth="50.0" prefWidth="150.0" text=" From ">
            <cellValueFactory> <PropertyValueFactory property="name" />
 			</cellValueFactory>
 			</TableColumn>
  
-           <TableColumn fx:id="inbox_subject" maxWidth="100.0" minWidth="50.0" prefWidth="100.0" text=" Subject "> 
+           <TableColumn fx:id="movie_rating" maxWidth="100.0" minWidth="50.0" prefWidth="100.0" text=" Subject "> 
            <cellValueFactory><PropertyValueFactory property="rating" />
 			</cellValueFactory>
 			</TableColumn>
@@ -56,190 +56,8 @@
    </Vbox>
    </content>
    </Tab>
+   <Tab text="Cinemas">
+   </Tab>
    </tabs>
-      <VBox>
-   		<Label fx:id="username_label" text=" " alignment="CENTER_RIGHT">
-   			<padding>
-		    	<Insets bottom="7.0" left="7.0" right="10.0" top="7.0" />
-			</padding>
-   		</Label>
-      	<MenuBar>
-        <menus>
-            <Menu mnemonicParsing="false" text="Compose" onAction="#backHandle" >
-            </Menu>
-          <Menu mnemonicParsing="false" text="Sign Out" onAction="#backHandle">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
-      </VBox>
-      <!--<HBox prefHeight="504.0" prefWidth="710.0">-->
-       <HBox fx:id="hbox" prefWidth="${hbox.parent.prefWidth}">
-         <children>
-            <TabPane fx:id="tabpane" prefHeight="50.0" minWidth="230.0" maxWidth="230.0" prefWidth="230.0" tabClosingPolicy="UNAVAILABLE">
-              <tabs>
-                <Tab text=" Inbox ">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <TableView fx:id="inbox_table" layoutY="-2.0" prefHeight="700.0" prefWidth="230.0" >
-                                <columns>
-                                    <TableColumn fx:id="inbox_from" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" From ">
-                                    <cellValueFactory> <PropertyValueFactory property="sender" />
-        							</cellValueFactory>
-        							</TableColumn>
-        							 
-                                    <TableColumn fx:id="inbox_subject" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Subject "> 
-                                    <cellValueFactory><PropertyValueFactory property="subject" />
-        							</cellValueFactory>
-        							</TableColumn>
-        							
-                                    <TableColumn fx:id="inbox_date" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Date ">
-                                    <cellValueFactory><PropertyValueFactory property="timestampPretty" />
-        							</cellValueFactory>
-        							</TableColumn>
-                                </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
-                  </content>
-                </Tab>
-                <Tab text=" Sent ">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <TableView fx:id="outbox_table" layoutY="-2.0" prefHeight="700.0" prefWidth="230.0">
-                                <columns>
-                                  <TableColumn fx:id="outbox_to" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" To ">
-                                  	<cellValueFactory><PropertyValueFactory property="sender" />
-        							</cellValueFactory>
-        							</TableColumn>
-                                  <TableColumn fx:id="outbox_subject" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Subject " >
-                                  	<cellValueFactory><PropertyValueFactory property="subject" />
-        							</cellValueFactory>
-        							</TableColumn>
-                                  <TableColumn fx:id="outbox_date" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Date " >
-                                  	<cellValueFactory><PropertyValueFactory property="timestampPretty" />
-        							</cellValueFactory>
-        							</TableColumn>
-                                </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
-                  </content>
-                </Tab>
-                  <Tab text=" Drafts ">
-                    <content>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <TableView fx:id="drafts_table" layoutY="-2.0" prefHeight="700.0" prefWidth="230.0">
-                                <columns>
-                                    <TableColumn fx:id="drafts_to" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" To " >
-                                    <cellValueFactory><PropertyValueFactory property="recipient" />
-        							</cellValueFactory>
-                                    </TableColumn>
-                                    <TableColumn fx:id="drafts_subject" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Subject " >
-                                    <cellValueFactory><PropertyValueFactory property="subject" />
-        							</cellValueFactory>
-        							</TableColumn>
-                                    <TableColumn fx:id="drafts_date" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Date " >
-                                    <cellValueFactory><PropertyValueFactory property="timestampPretty" />
-        							</cellValueFactory>
-        							</TableColumn>
-                                </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
-                    </content>
-                  </Tab>
-              </tabs>
-            <Tab text=" Spam ">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <TableView fx:id="spam_table" layoutY="-2.0" prefHeight="700.0" prefWidth="230.0" >
-                                <columns>
-                                    <TableColumn fx:id="spam_from" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" From ">
-                                    <cellValueFactory> <PropertyValueFactory property="sender" />
-        							</cellValueFactory>
-        							</TableColumn>
-        							 
-                                    <TableColumn fx:id="spam_subject" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Subject "> 
-                                    <cellValueFactory><PropertyValueFactory property="subject" />
-        							</cellValueFactory>
-        							</TableColumn>
-        							
-                                    <TableColumn fx:id="spam_date" maxWidth="78.0" minWidth="50.0" prefWidth="78.0" text=" Date ">
-                                    <cellValueFactory><PropertyValueFactory property="timestampPretty" />
-        							</cellValueFactory>
-        							</TableColumn>
-                                </columns>
-                              </TableView>
-                           </children>
-                        </AnchorPane>
-                  </content>
-                </Tab>
-                            </TabPane>
-                
-            <VBox>
-            	<children>
-	            		<GridPane vgap="15.0" hgap="15.0">
-	            			<padding>
-			                 	<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             	</padding>
-	            			<children>
-		            			<Label text="To: " GridPane.columnIndex="0" GridPane.rowIndex="0">
-			            			<padding>
-			                 			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             			</padding>
-		             		 	</Label>
-		             		 	<Label text="Subject" GridPane.columnIndex="0" GridPane.rowIndex="1">
-			            			<padding>
-			                 			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             			</padding>
-		             		 	</Label>
-		             		 	<TextField fx:id="to_field" GridPane.columnIndex="1" GridPane.rowIndex="0" prefWidth="400" >
-		             		 		<padding>
-			                 			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             			</padding>
-		             		 	</TextField>
-		             		 	<TextField fx:id="subject_field" GridPane.columnIndex="1" GridPane.rowIndex="1" prefWidth="400">
-		             		 		<padding>
-			                 			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             			</padding>
-		             		 	</TextField>
-		             		 	<Button text="Send" GridPane.columnIndex="2" GridPane.rowIndex="1" onAction="#sendMessage">
-		             		 		<padding>
-			                 			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             			</padding>
-		             		 	</Button>
-		             		 	<Button text="Cancel" GridPane.columnIndex="3" GridPane.rowIndex="1" onAction="#cancel">
-		             		 		<padding>
-			                 			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             			</padding>
-		             		 	</Button>
-		             		 	<Button text="Save->Draft" GridPane.columnIndex="4" GridPane.rowIndex="1" onAction="#saveToDrafts">
-		             		 		<padding>
-			                 			<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-			             			</padding>
-		             		 	</Button>
-		             		 	<Label fx:id="compose_label" text="" GridPane.rowIndex="0" GridPane.columnIndex="2"> 
-		             		 		<padding>
-			                 			<Insets bottom="5.0" left="5.0" right="5.0" top="0.0" />
-			             			</padding>
-		             		 	</Label>
-	            			</children>
-	            		</GridPane>
-	            	<TextArea fx:id="email_textarea" prefWidth="750" prefHeight="650.0">
-	             		<padding>
-	                 		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-	             		</padding>
-	             	</TextArea>
-             	</children>
-             </VBox>
-         </children>
-      </HBox>
-   </children>
-</VBox>
+   </TabPane>
+   
