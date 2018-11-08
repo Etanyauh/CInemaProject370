@@ -26,7 +26,7 @@ public class Admin_SignIn_Controller {
 	@FXML
 	void adminLogin (ActionEvent event) throws Exception {
         if(password_field_1.getText().trim().equals(admin_password)){
-            ViewNavigator.loadScreen(ViewNavigator.EmailScreen);
+            ViewNavigator.loadScreen(ViewNavigator.ADMIN_VIEW);
         } else {
         	statusLabel.setText("Incorrect Passoword");
         }

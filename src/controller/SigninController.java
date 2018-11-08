@@ -32,12 +32,12 @@ public class SigninController {
 
     @FXML
     void customerHandle(ActionEvent event) throws Exception {
-        ViewNavigator.loadScreen(ViewNavigator.EmailScreen);           
+        ViewNavigator.loadScreen(ViewNavigator.CUSTOMER_VIEW);           
     }
 
     @FXML
     void adminHandle (ActionEvent event) throws NoSuchAlgorithmException {
-    	ViewNavigator.loadScreen(ViewNavigator.ADMINSCREEN);
+    	ViewNavigator.loadScreen(ViewNavigator.ADMIN_SIGNIN_SCREEN);
     }
             
 

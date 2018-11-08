@@ -17,7 +17,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception{
-        stage.setTitle("Email Client");
+        stage.setTitle("Movie Marquee");
         stage.setScene(
             createScene(
                 loadMainPane()

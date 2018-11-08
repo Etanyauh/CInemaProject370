@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/corneliusvanderbilt/jars/mysql-connector-java-8.0.12/mysql-connector-java-8.0.12.jar"/>
+	<classpathentry kind="lib" path="/Users/corneliusvanderbilt/ChatApp/node_modules/react-native-branch/android/build/intermediates/exploded-aar/org.webkit/android-jsc/r174650/jars/controlsfx-9.0.0/controlsfx-9.0.0.jar"/>
+	<classpathentry kind="output" path="out/production/Email"/>
+</classpath>
