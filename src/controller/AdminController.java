@@ -198,6 +198,35 @@ public class AdminController implements Initializable {
 		 String time = add_showtime_time_field.getSelectionModel().getSelectedItem().toString();
 		 add_showtime_cinema_field.clear();
 		 add_showtime_movie_field.clear();
+		 add_showtime_time_field.getSelectionModel().clearSelection();
+		 ResultSet rs = null;
+		 ResultSet rs2 = null;
+
+		 
+    	 Connection con;
+
+		 try {
+				con = dataBase.getConnection();
+				rs = con.createStatement().executeQuery("SELECT * FROM showing WHERE movie='"+movie+"' AND showtime='"+time+"'");
+				if(rs.next()){
+					status_label.setText("Movie is already showing at selected time");
+					return;
+				}
+				rs2 = con.createStatement().executeQuery("SELECT * FROM showing WHERE cinema='"+cinema+"' AND movie='"+movie+"'");
+				int counter = 0;
+				while(rs2.next()){
+					counter++;
+					if(counter > 3){
+						status_label.setText("Movie is already showing three times at: "+cinema);
+						return;
+					}
+					
+				}
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
 
 		 try {
 			 boolean res = dataBase.insertShowtime(cinema, movie, time);
@@ -230,6 +259,7 @@ public class AdminController implements Initializable {
 				connect = dataBase.getConnection();
 				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
 				while (rs.next()) {
+					if(!cinema_list.contains(rs.getString(2)))
 					cinema_list.add(rs.getString(2));
 		    	}	
 			} catch (Exception e) {
@@ -270,7 +300,9 @@ public class AdminController implements Initializable {
 				connect = dataBase.getConnection();
 				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
 				while (rs.next()) {
+					if(!movie_list.contains(rs.getString(3))){
 					movie_list.add(rs.getString(3));
+					}
 		    	}	
 				
 			} catch (Exception e) {
@@ -279,7 +311,8 @@ public class AdminController implements Initializable {
 			
 	    	for(String movie: movie_list){
 	    		formattedString.append(movie+"\n");
-	    		formattedString.append("=================\n");	    		try {
+	    		formattedString.append("=================\n");	    		
+	    		try {
 					connect = dataBase.getConnection();
 					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
 					while (rs2.next()) {

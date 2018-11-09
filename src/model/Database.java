@@ -175,8 +175,6 @@ public class Database {
 			String delete2 = ("DELETE FROM showing WHERE movie = '"+movie_name+"'");
 			
 			Connection con = getConnection();
-			
-			
 			PreparedStatement deleteMovies = con.prepareStatement(delete1);
 			deleteMovies.executeUpdate();
 			
