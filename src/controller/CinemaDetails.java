@@ -1,48 +1,43 @@
 package controller;
-
 import com.mysql.cj.conf.StringProperty;
-
 import javafx.beans.property.SimpleStringProperty;
 
 public class CinemaDetails {
 	private final SimpleStringProperty name;
-	private final SimpleStringProperty rating;
+	private final SimpleStringProperty x;
+	private final SimpleStringProperty y;
 
-	public CinemaDetails(String name, String rating){
+	public CinemaDetails(String name, String x, String y){
 		this.name = new SimpleStringProperty(name);
-		this.rating = new SimpleStringProperty(rating);
-		
+		this.x = new SimpleStringProperty(x);
+		this.y = new SimpleStringProperty(y);
 	}
+	
 	
 	public String getName() {
 		return name.get();
 	}
 	
-	public String getRating() {
-		return rating.get();
+	public String getX() {
+		return x.get();
 	}
 	
-
-	
-
-	public void setFrom(String val){
-		name.set(val);
+		
+	public String getY() {
+		return y.get();
 	}
 	
-	public void setRating(String val){
-		rating.set(val);
-	}
-	
-
-
 	
 	public SimpleStringProperty nameProperty(){
 		return name;
 	}
 	
-	public SimpleStringProperty ratingProperty(){
-		return rating;
+	public SimpleStringProperty xProperty(){
+		return x;
 	}
 	
+	public SimpleStringProperty yProperty(){
+		return y;
+	}
 }
 

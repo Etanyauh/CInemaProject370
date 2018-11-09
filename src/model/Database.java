@@ -33,9 +33,9 @@ public class Database {
 
 	public void createTable() throws Exception{
 		try {
-			String cinemas = "CREATE TABLE IF NOT EXISTS cinema(x int,y int,name varchar(255),PRIMARY KEY(name))";
+			String cinemas = "CREATE TABLE IF NOT EXISTS cinema(name varchar(255),x varchar(255),y varchar(255), PRIMARY KEY(name))";
 			String movies = "CREATE TABLE IF NOT EXISTS movie(name varchar(255), rating varchar(255), PRIMARY KEY(name))";
-			String showing = "CREATE TABLE IF NOT EXISTS showing(showtimeID int)";
+			String showing = "CREATE TABLE IF NOT EXISTS showing(showtimeID int NOT NULL AUTO_INCREMENT, cinema varchar(255), movie varchar(255), showtime varchar(255),PRIMARY KEY(showtimeID))";
 			
 			Connection con = getConnection();
 			PreparedStatement createCinemas = con.prepareStatement(cinemas);
@@ -55,70 +55,73 @@ public class Database {
 
 	}
 
-	public void insertMovie(String name, String rating) throws Exception{
+	public boolean insertMovie(String name, String rating) throws Exception{
 
 		try {
-			String sql = "INSERT INTO movies (name,rating) VALUES ('"+name+"','"+rating+"')";
-			Connection con = getConnection();
-			PreparedStatement insert = con.prepareStatement(sql);
-			insert.executeUpdate();
-
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	public void insertCinema(String name, int x, int y) throws Exception {
-		try {
-			String sql = "INSERT INTO cinemas(x,y,name) VALUES ('"+x+"','"+y+"', '"+name+"')";
-			Connection con = getConnection();
-			PreparedStatement insert = con.prepareStatement(sql);
-			insert.executeUpdate();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public void insertShowtime(String cinema, String movie, int time) throws Exception {
-		try {
-			String sql = "INSERT INTO showing(cinema,movie, time) VALUES ('"+cinema+"','"+movie+"','"+time+"')";
-			Connection con = getConnection();
-			PreparedStatement insert = con.prepareStatement(sql);
-			insert.executeUpdate();
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public ArrayList<String> getCinema(String cinema) throws Exception{
-		try {
-
+			
+			ResultSet rs1 = null;
 			Connection con = getConnection();
 
-			String sqlStatement = "SELECT * FROM cinemas WHERE user =" + "'" + cinema + "'"; 
+			rs1 = con.createStatement().executeQuery("SELECT * FROM movie WHERE name = '"+name+"'");
 
-			PreparedStatement statement = con.prepareStatement(sqlStatement);
-			ResultSet result = statement.executeQuery();
-
-			ArrayList<String> array = new ArrayList<String>();
-			while(result.next()) {
-				//System.out.print(result.getString("user") + " ");
-				//System.out.println(result.getString("password"));
-				array.add(result.getString("x"));
-				array.add(result.getString("y"));
-				array.add(result.getString("name"));
-				
+			if(rs1.next()){
+				return false;
 			}
-			System.out.println("All records have been selected");
-			return array;
+			String sql = "INSERT INTO movie(name,rating) VALUES ('"+name+"','"+rating+"')";
+			PreparedStatement insert = con.prepareStatement(sql);
+			insert.executeUpdate();
 
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-
-		return null;
+		return true;
 	}
+	
+	
+	public boolean insertCinema(String name, String x, String y) throws Exception {
+		try {
+			ResultSet rs1 = null;
+			Connection con = getConnection();
+
+			rs1 = con.createStatement().executeQuery("SELECT * FROM cinema WHERE name = '"+name+"' AND x='"+x+"' AND y ='"+y+"'");
+
+			if(rs1.next()){
+				return false;
+			}
+			
+			String sql = "INSERT INTO cinema(name,x,y) VALUES ('"+name+"','"+x+"', '"+y+"')";
+			PreparedStatement insert = con.prepareStatement(sql);
+			insert.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+	
+	public boolean insertShowtime(String cinema, String movie, String time) throws Exception {
+		try {
+			ResultSet rs1 = null;
+			ResultSet rs2 = null;
+			ResultSet rs3 = null;
+
+
+			Connection con = getConnection();
+			rs1 = con.createStatement().executeQuery("SELECT * FROM cinema WHERE name = '"+cinema+"'");
+			rs2 = con.createStatement().executeQuery("SELECT * FROM movie WHERE name = '"+movie+"'");
+	    	rs3 = con.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema+"' AND movie='"+movie+"' AND showtime='"+time+"'");
+			if((!rs1.next() || !rs2.next()) || (rs3.next())){
+				return false;
+			}
+			String sql = "INSERT INTO showing(showtimeID, cinema, movie, showtime) VALUES (NULL,'"+cinema+"','"+movie+"','"+time+"')";
+			PreparedStatement insert = con.prepareStatement(sql);
+			insert.executeUpdate();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
+
+
 
 	
 	/**
@@ -145,6 +148,46 @@ public class Database {
 	public String toString() {
 		return userName + " " + passWord + " " + firstName + " " + lastName;
 	}
+
+	public void deleteCinema(String cinema_name) {
+		try {
+			String delete1 = ("DELETE FROM cinema WHERE name = '"+cinema_name+"'");
+			String delete2 = ("DELETE FROM showing WHERE cinema = '"+cinema_name+"'");
+			
+			Connection con = getConnection();
+			
+			
+			PreparedStatement deleteCinemas = con.prepareStatement(delete1);
+			deleteCinemas.executeUpdate();
+			
+			PreparedStatement deleteShowtimes = con.prepareStatement(delete2);
+			deleteShowtimes.executeUpdate();
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+
+	public void deleteMovie(String movie_name) {
+		try {
+			String delete1 = ("DELETE FROM movie WHERE name = '"+movie_name+"'");
+			String delete2 = ("DELETE FROM showing WHERE movie = '"+movie_name+"'");
+			
+			Connection con = getConnection();
+			
+			
+			PreparedStatement deleteMovies = con.prepareStatement(delete1);
+			deleteMovies.executeUpdate();
+			
+			PreparedStatement deleteShowtimes = con.prepareStatement(delete2);
+			deleteShowtimes.executeUpdate();
+
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 
 }
