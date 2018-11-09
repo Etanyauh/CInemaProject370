@@ -176,8 +176,17 @@ public class AdminController implements Initializable {
 		 add_cinema_name_field.clear();
 		 add_x_field.clear();
 		 add_y_field.clear();
+		 ResultSet rs = null;		 
+    	 Connection con;
+		 
 		 
 		 try {
+			 con = dataBase.getConnection();
+			 rs = con.createStatement().executeQuery("SELECT * FROM cinema WHERE x='"+x+"' AND y='"+y+"'");
+			if(rs.next()){
+				status_label.setText("A cinema already exists at this location!");
+				return;
+			}
 			boolean res = dataBase.insertCinema(cinema_name, x, y);
 			if(res == false) {
 				 status_label.setText("Error inserting cinema. Cinema already exists!");
