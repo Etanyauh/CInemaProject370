@@ -5,8 +5,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.ResourceBundle;
 
@@ -115,46 +118,53 @@ public class CustomerController implements Initializable {
 	 
     
 	
-	String rowChosen(MovieDetails m){
-		MovieDetails object =  m;
-		String movie_name = object.getName();
-		ArrayList<String> cinema_list = new ArrayList<String>();
-		StringBuilder formattedString = new StringBuilder();
-    	Connection connect;
-		ResultSet rs = null;
-		ResultSet rs2 = null;
-		
-			try {
-				connect = dataBase.getConnection();
-				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
-				while (rs.next()) {
-					cinema_list.add(rs.getString(2));
-		    	}	
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	    	for(String cin: cinema_list){
-	    		formattedString.append(cin+"\n");
-	    		formattedString.append("==================\n");
-
-	    		try {
+	 String rowChosen(MovieDetails m){
+			MovieDetails object =  m;
+			String movie_name = object.getName();
+			ArrayList<String> cinema_list = new ArrayList<String>();
+			
+			StringBuilder formattedString = new StringBuilder();
+	    	Connection connect;
+			ResultSet rs = null;
+			ResultSet rs2 = null;
+			
+				try {
 					connect = dataBase.getConnection();
-					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
-					while (rs2.next()) {
-						if(rs2.getString(2).equals(cin)){
-							formattedString.append(rs2.getString(4) + "\n");
-						}
+					rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
+					while (rs.next()) {
+						if(!cinema_list.contains(rs.getString(2)))
+						cinema_list.add(rs.getString(2));
 			    	}	
-		    		formattedString.append("\n");
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-	    	}
-	    	
-	    return formattedString.toString();
-	    		
-    }
+		    	for(String cin: cinema_list){
+		    		ArrayList<String> showtime_list = new ArrayList<String>();
+		    		formattedString.append(cin+"\n");
+		    		formattedString.append("=================\n");
+		    		try {
+						connect = dataBase.getConnection();
+						rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
+						while (rs2.next()) {
+							if(rs2.getString(2).equals(cin)){
+								showtime_list.add(rs2.getString(4));
+							}
+				    	}	
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+		    		showtime_list = sortTimes(showtime_list);
+		    		for(String show: showtime_list){
+						formattedString.append(show+ "\n");
+		    		}
+		    		formattedString.append("\n");
+
+		    	}
+		    	
+		    return formattedString.toString();
+		    		
+	    }
 	
 	String rowChosen(CinemaDetails m){
 		CinemaDetails object =  m;
@@ -169,7 +179,9 @@ public class CustomerController implements Initializable {
 				connect = dataBase.getConnection();
 				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
 				while (rs.next()) {
+					if(!movie_list.contains(rs.getString(3))){
 					movie_list.add(rs.getString(3));
+					}
 		    	}	
 				
 			} catch (Exception e) {
@@ -177,27 +189,49 @@ public class CustomerController implements Initializable {
 			}
 			
 	    	for(String movie: movie_list){
+	    		ArrayList<String> movie_sort = new ArrayList<String>();
 	    		formattedString.append(movie+"\n");
-	    		formattedString.append("=================\n");
-
+	    		formattedString.append("=================\n");	    		
 	    		try {
 					connect = dataBase.getConnection();
 					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
 					while (rs2.next()) {
 						if(rs2.getString(3).equals(movie)){
-							formattedString.append(rs2.getString(4) + "\n");
+							movie_sort.add(rs2.getString(4));
+
 						}
-			    	}
-		    		formattedString.append("\n");
+			    	}	
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+	    		movie_sort = sortTimes(movie_sort);
+	    		for(String mov: movie_sort){
+	    			formattedString.append(mov+ "\n");
+	    		}
+	    		formattedString.append("\n");
+
 	    	}
 	    	
 	    return formattedString.toString();
 	    		
     }
+	
+	private ArrayList<String> sortTimes(ArrayList<String> showtime_list) {
+		Collections.sort(showtime_list, new Comparator<String>() {
+	        DateFormat f = new SimpleDateFormat("hh:mm a");
+	        @Override
+	        public int compare(String o1, String o2) {
+	            try {
+	                return f.parse(o1).compareTo(f.parse(o2));
+	            } catch (ParseException e) {
+	                throw new IllegalArgumentException(e);
+	            }
+	        }
+		});
+		return showtime_list;
+	}
+	
     
 	
     public void loadTables(){

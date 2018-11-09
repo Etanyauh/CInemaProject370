@@ -5,8 +5,11 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -259,6 +262,7 @@ public class AdminController implements Initializable {
 		MovieDetails object =  m;
 		String movie_name = object.getName();
 		ArrayList<String> cinema_list = new ArrayList<String>();
+		
 		StringBuilder formattedString = new StringBuilder();
     	Connection connect;
 		ResultSet rs = null;
@@ -275,6 +279,7 @@ public class AdminController implements Initializable {
 				e.printStackTrace();
 			}
 	    	for(String cin: cinema_list){
+	    		ArrayList<String> showtime_list = new ArrayList<String>();
 	    		formattedString.append(cin+"\n");
 	    		formattedString.append("=================\n");
 	    		try {
@@ -282,20 +287,27 @@ public class AdminController implements Initializable {
 					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
 					while (rs2.next()) {
 						if(rs2.getString(2).equals(cin)){
-							formattedString.append(rs2.getString(4) + "\n");
+							showtime_list.add(rs2.getString(4));
 						}
 			    	}	
-		    		formattedString.append("\n");
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+	    		showtime_list = sortTimes(showtime_list);
+	    		for(String show: showtime_list){
+					formattedString.append(show+ "\n");
+	    		}
+	    		formattedString.append("\n");
+
 	    	}
 	    	
 	    return formattedString.toString();
 	    		
     }
 	
+	
+
 	String rowChosen(CinemaDetails m){
 		CinemaDetails object =  m;
 		String cinema_name = object.getName();
@@ -319,6 +331,7 @@ public class AdminController implements Initializable {
 			}
 			
 	    	for(String movie: movie_list){
+	    		ArrayList<String> movie_sort = new ArrayList<String>();
 	    		formattedString.append(movie+"\n");
 	    		formattedString.append("=================\n");	    		
 	    		try {
@@ -326,20 +339,43 @@ public class AdminController implements Initializable {
 					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
 					while (rs2.next()) {
 						if(rs2.getString(3).equals(movie)){
-							formattedString.append(rs2.getString(4) + "\n");
+							movie_sort.add(rs2.getString(4));
+
 						}
 			    	}	
-		    		formattedString.append("\n");
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+	    		movie_sort = sortTimes(movie_sort);
+	    		for(String mov: movie_sort){
+	    			formattedString.append(mov+ "\n");
+	    		}
+	    		formattedString.append("\n");
+
+
 	    	}
 	    	
 	    return formattedString.toString();
 	    		
     }
     
+	
+	private ArrayList<String> sortTimes(ArrayList<String> showtime_list) {
+		Collections.sort(showtime_list, new Comparator<String>() {
+	        DateFormat f = new SimpleDateFormat("hh:mm a");
+	        @Override
+	        public int compare(String o1, String o2) {
+	            try {
+	                return f.parse(o1).compareTo(f.parse(o2));
+	            } catch (ParseException e) {
+	                throw new IllegalArgumentException(e);
+	            }
+	        }
+		});
+		return showtime_list;
+	}
+	
 	
     public void loadTables(){
 

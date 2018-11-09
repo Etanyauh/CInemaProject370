@@ -48,14 +48,7 @@
 								   </padding>
 				                <children>
 				                </children>
-				                <HBox spacing="5">
-				                   <padding>
-								      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-								   </padding>
-				                <children>
-				                <Button fx:id="delete_movie" text="Delete Movie" onAction="#deleteMovie"> </Button>
-				                </children>
-				                </HBox>
+				               
 				                 <TableView fx:id="movies_table" layoutY="-2.0" prefHeight="550.0" maxWidth="300" prefWidth="300.0"  GridPane.columnIndex="0" GridPane.rowIndex="2">
 							       <columns>
 							           <TableColumn fx:id="movie_name" maxWidth="200.0" minWidth="50.0" prefWidth="200.0" text=" Movie ">
@@ -68,6 +61,14 @@
 										</TableColumn>
 							   		</columns>
 							   </TableView>
+							    <HBox spacing="5">
+				                   <padding>
+								      <Insets bottom="20.0" left="20.0" right="15.0" top="20.0" />
+								   </padding>
+				                <children>
+				                <Button fx:id="delete_movie" text="Delete Movie" onAction="#deleteMovie"> </Button>
+				                </children>
+				                </HBox>
 							   	</VBox>
 							   	<VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
 							   	<Label fx:id="cinemas_playing_label" text="">
@@ -120,14 +121,7 @@
 								   </padding>
 				                <children>
 				                </children>
-				                <HBox spacing="5">
-				                   <padding>
-								      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-								   </padding>
-				                <children>
-				                <Button fx:id="delete_cinema" text="Delete Cinema" onAction="#deleteCinema"> </Button>
-				                </children>
-				                </HBox>
+				              
 				                 <TableView fx:id="cinemas_table" layoutY="-2.0" prefHeight="550.0" maxWidth="300" prefWidth="300.0"  GridPane.columnIndex="0" GridPane.rowIndex="2">
 							       <columns>
 							           <TableColumn fx:id="cinema_name" maxWidth="200.0" minWidth="50.0" prefWidth="200.0" text=" Cinema ">
@@ -144,6 +138,14 @@
 										</TableColumn>
 							   		</columns>
 							   </TableView>
+							     <HBox spacing="5">
+				                   <padding>
+								      <Insets bottom="20.0" left="20.0" right="20.0" top="15.0" />
+								   </padding>
+				                <children>
+				                <Button fx:id="delete_cinema" text="Delete Cinema" onAction="#deleteCinema"> </Button>
+				                </children>
+				                </HBox>
 							   	</VBox>
 							   		<VBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="0">
 							   	<Label fx:id="movies_showing_label" text="">
