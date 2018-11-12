@@ -104,17 +104,26 @@ public class CustomerController implements Initializable {
 	}
 	
 	 @FXML void searchRating(ActionEvent event){
-		 String ratings = rating_field.getText();
-		 String[] rateArray = ratings.split(",");
-		 loadRatings(rateArray);
+		 if(rating_field.getText().isEmpty()){
+			 loadTables();
+		 } else {
+			 String ratings = rating_field.getText();
+			 String[] rateArray = ratings.split(",");
+			 loadRatings(rateArray);
 	    }
+	 }
+	 
 	 
 	 @FXML void searchAddress(ActionEvent event){
-		 String x = x_field.getText();
-		 String y = y_field.getText();
-		 String r = radius_field.getText();
-		 loadLocation(x,y,r);
-	    }
+		 if(x_field.getText().isEmpty() || y_field.getText().isEmpty() || radius_field.getText().isEmpty()){
+			 loadTables();
+		 } else {
+			 String x = x_field.getText();
+			 String y = y_field.getText();
+			 String r = radius_field.getText();
+			 loadLocation(x,y,r);
+		 }
+	 }
 	 
     
 	
