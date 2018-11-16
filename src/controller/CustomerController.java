@@ -23,6 +23,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -54,19 +56,38 @@ public class CustomerController implements Initializable {
 	@FXML private TableColumn<CinemaDetails,String> cinema_name;
 	@FXML private TableColumn<CinemaDetails,String> cinema_x;
 	@FXML private TableColumn<CinemaDetails,String> cinema_y;
+	@FXML private Tab admin_tab;
+	@FXML private TabPane tab_pane;
 	private ObservableList<MovieDetails> data;
 	private ObservableList<CinemaDetails> data2;
 	
 
     private Database dataBase = new Database();
+    
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		if(Current.getSession().tab.equals("movie")){
+			tab_pane.getSelectionModel().clearAndSelect(0);
+		} else if(Current.getSession().tab.equals("cinema")){
+			tab_pane.getSelectionModel().clearAndSelect(1);
+		} else {
+			tab_pane.getSelectionModel().clearAndSelect(0);
+
+		}
 	
 		rating_field.setPromptText("G,PG,PG13,R,NC17");
 		x_field.setPromptText("X");
 		y_field.setPromptText("Y");
 		radius_field.setPromptText("R");
+		
+		
+		admin_tab.setOnSelectionChanged(event -> {
+	        if (admin_tab.isSelected()) {
+	           ViewNavigator.loadScreen(ViewNavigator.SIGN_IN);
+	        }
+	    });
 		
 		movies_table.setRowFactory(tv ->{
     		TableRow<MovieDetails> row = new TableRow<>();
@@ -103,12 +124,21 @@ public class CustomerController implements Initializable {
 		loadTables();
 	}
 	
+	@FXML void goAdminButton(ActionEvent event){
+    	ViewNavigator.loadScreen(ViewNavigator.ADMIN_SIGNIN_SCREEN);
+    }
+	
 	 @FXML void searchRating(ActionEvent event){
 		 if(rating_field.getText().isEmpty()){
 			 loadTables();
 		 } else {
-			 String ratings = rating_field.getText();
+			 String ratings = rating_field.getText().toUpperCase();
 			 String[] rateArray = ratings.split(",");
+			 for(int i = 0; i < rateArray.length; i++){
+				 if (rateArray[i].equals("PG-13")){
+					 rateArray[i] = "PG13";
+				 }
+			 }
 			 loadRatings(rateArray);
 	    }
 	 }
@@ -139,7 +169,7 @@ public class CustomerController implements Initializable {
 			
 				try {
 					connect = dataBase.getConnection();
-					rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
+					rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"' ORDER BY cinema");
 					while (rs.next()) {
 						if(!cinema_list.contains(rs.getString(2)))
 						cinema_list.add(rs.getString(2));
@@ -150,7 +180,7 @@ public class CustomerController implements Initializable {
 		    	for(String cin: cinema_list){
 		    		ArrayList<String> showtime_list = new ArrayList<String>();
 		    		formattedString.append(cin+"\n");
-		    		formattedString.append("=================\n");
+		    		formattedString.append("====================\n");
 		    		try {
 						connect = dataBase.getConnection();
 						rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
@@ -164,11 +194,14 @@ public class CustomerController implements Initializable {
 						e.printStackTrace();
 					}
 		    		showtime_list = sortTimes(showtime_list);
-		    		for(String show: showtime_list){
-						formattedString.append(show+ "\n");
+		    		for(int i = 0; i < showtime_list.size(); i++){
+		    			if(i == showtime_list.size() - 1){
+			    			formattedString.append(showtime_list.get(i));
+		    			} else {
+		    			formattedString.append(showtime_list.get(i)+ ", ");
+		    			}
 		    		}
-		    		formattedString.append("\n");
-
+		    		formattedString.append("\n\n");
 		    	}
 		    	
 		    return formattedString.toString();
@@ -179,14 +212,17 @@ public class CustomerController implements Initializable {
 		CinemaDetails object =  m;
 		String cinema_name = object.getName();
 		ArrayList<String> movie_list = new ArrayList<String>();
+		ArrayList<String> rating_list = new ArrayList<String>();
 		StringBuilder formattedString = new StringBuilder();
     	Connection connect;
 		ResultSet rs = null;
 		ResultSet rs2 = null;
+		ResultSet rs3 = null;
+
 		
 			try {
 				connect = dataBase.getConnection();
-				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
+				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'ORDER BY movie");
 				while (rs.next()) {
 					if(!movie_list.contains(rs.getString(3))){
 					movie_list.add(rs.getString(3));
@@ -198,14 +234,37 @@ public class CustomerController implements Initializable {
 			}
 			
 	    	for(String movie: movie_list){
+	    		
+	    		try {
+					connect = dataBase.getConnection();
+					rs3 = connect.createStatement().executeQuery("SELECT * FROM movie WHERE name = '"+movie+"'");
+					while (rs3.next()) {
+						if(rs3.getString(2) == null){
+							rating_list.add(("NR"));
+
+						} else {
+						rating_list.add((rs3.getString(2)));
+						}
+						}
+			    	}	
+					 catch (Exception e) {
+					e.printStackTrace();
+				}
+	    		
+	    	}
+	    		
+	    		for (int t = 0; t < movie_list.size(); t++){
+	    		
+	    		
+	    		
 	    		ArrayList<String> movie_sort = new ArrayList<String>();
-	    		formattedString.append(movie+"\n");
-	    		formattedString.append("=================\n");	    		
+	    		formattedString.append(movie_list.get(t)+"    "+rating_list.get(t)+"\n");
+	    		formattedString.append("====================\n");	    		
 	    		try {
 					connect = dataBase.getConnection();
 					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
 					while (rs2.next()) {
-						if(rs2.getString(3).equals(movie)){
+						if(rs2.getString(3).equals(movie_list.get(t))){
 							movie_sort.add(rs2.getString(4));
 
 						}
@@ -215,10 +274,14 @@ public class CustomerController implements Initializable {
 					e.printStackTrace();
 				}
 	    		movie_sort = sortTimes(movie_sort);
-	    		for(String mov: movie_sort){
-	    			formattedString.append(mov+ "\n");
+	    		for(int i = 0; i < movie_sort.size(); i++){
+	    			if(i == movie_sort.size() - 1){
+		    			formattedString.append(movie_sort.get(i));
+	    			} else {
+	    			formattedString.append(movie_sort.get(i)+ ", ");
+	    			}
 	    		}
-	    		formattedString.append("\n");
+	    		formattedString.append("\n\n");
 
 	    	}
 	    	

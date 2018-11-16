@@ -25,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Tab;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -43,8 +44,8 @@ public class AdminController implements Initializable {
 	@FXML private TextField add_cinema_name_field;
 	@FXML private TextField add_x_field;
 	@FXML private TextField add_y_field;
-	@FXML private TextField add_showtime_cinema_field;
-	@FXML private TextField add_showtime_movie_field;
+	@FXML private ComboBox add_showtime_cinema_field;
+	@FXML private ComboBox add_showtime_movie_field;
 	@FXML private ComboBox add_showtime_time_field;
 	@FXML private Label status_label;
 	@FXML private Label status_label_movie;
@@ -67,12 +68,36 @@ public class AdminController implements Initializable {
 	@FXML private TableColumn<CinemaDetails,String> cinema_y;
 	private ObservableList<MovieDetails> data;
 	private ObservableList<CinemaDetails> data2;
-	
+	@FXML private Tab customer_tab;
+	@FXML private Tab movie_tab;
+	@FXML private Tab cinema_tab;
 
     private Database dataBase = new Database();
+    
+    
+    void updateCombos(){
+    	List<String> list_movies = dataBase.getMovies() ;
+		List<String> list_cinemas = dataBase.getCinemas();
+		ObservableList<String> movieList = FXCollections.observableList(list_movies);
+        ObservableList<String> cinemaList = FXCollections.observableList(list_cinemas);
+        add_showtime_movie_field.getItems().clear();
+        add_showtime_movie_field.setItems(movieList);
+        add_showtime_cinema_field.getItems().clear();
+        add_showtime_cinema_field.setItems(cinemaList);
+		
+    }
 
+    @FXML void goCustomerButton(ActionEvent event){
+    	ViewNavigator.loadScreen(ViewNavigator.CUSTOMER_VIEW);
+    }
+    
+    
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		
+		
+		List<String> list_movies = dataBase.getMovies() ;
+		List<String> list_cinemas = dataBase.getCinemas();
 		
 		
 		List<String> listRating = new ArrayList<String>();
@@ -94,13 +119,45 @@ public class AdminController implements Initializable {
         
         ObservableList<String> obList = FXCollections.observableList(list);
         ObservableList<String> rateList = FXCollections.observableList(listRating);
+        ObservableList<String> movieList = FXCollections.observableList(list_movies);
+        ObservableList<String> cinemaList = FXCollections.observableList(list_cinemas);
+
 
         add_showtime_time_field.getItems().clear();
         add_showtime_time_field.setItems(obList);
         
         add_rating_field.getItems().clear();
         add_rating_field.setItems(rateList);
+        
+        add_showtime_movie_field.getItems().clear();
+        add_showtime_movie_field.setItems(movieList);
+        add_showtime_cinema_field.getItems().clear();
+        add_showtime_cinema_field.setItems(cinemaList);
 		
+        
+        customer_tab.setOnSelectionChanged(event -> {
+            if (customer_tab.isSelected()) {
+                ViewNavigator.loadScreen(ViewNavigator.CUSTOMER_VIEW);
+                //Do stuff here
+            }
+        });
+        
+        movie_tab.setOnSelectionChanged(event -> {
+            if (movie_tab.isSelected()) {
+            	status_label.setText("");;
+            }
+        });
+        
+        cinema_tab.setOnSelectionChanged(event -> {
+            if (cinema_tab.isSelected()) {
+            	status_label_movie.setText("");;
+            }
+        });
+        
+        
+        
+        
+        
 		movies_table.setRowFactory(tv ->{
     		TableRow<MovieDetails> row = new TableRow<>();
     	    row.setOnMouseClicked(event -> {
@@ -140,7 +197,8 @@ public class AdminController implements Initializable {
 	 	}
  		Current.getSession().cinema = "";
 	 	loadTables();
-}
+	 	updateCombos();
+	 }
 	 
 	 @FXML void deleteCinema(ActionEvent event){
 		 String cinema = Current.getSession().cinema;
@@ -150,6 +208,7 @@ public class AdminController implements Initializable {
 		 
 		 Current.getSession().cinema = "";
 		 loadTables();
+	 	updateCombos();
 
     }
 	 
@@ -162,21 +221,28 @@ public class AdminController implements Initializable {
 			boolean res = dataBase.insertMovie(movie_name, movie_rating);
 			if(res == false) {
 				 status_label_movie.setText("Error inserting movie. Movie already exists!");
+
 			 } else {
 				 status_label_movie.setText("");
+				 add_name_field.clear();
+
 			 }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		loadTables();
-		
+	 	updateCombos();
+
 	 }
 	 
 	 @FXML void addCinema(ActionEvent event){
 		 String cinema_name = add_cinema_name_field.getText();
 		 String x = add_x_field.getText();
 		 String y = add_y_field.getText();
-		 add_cinema_name_field.clear();
+		 if(Integer.parseInt(x) > 100 || Integer.parseInt(y)  > 100){
+				status_label.setText("Cinema address out of bounds");
+				return;
+		 }
 		 add_x_field.clear();
 		 add_y_field.clear();
 		 ResultSet rs = null;		 
@@ -194,6 +260,8 @@ public class AdminController implements Initializable {
 			if(res == false) {
 				 status_label.setText("Error inserting cinema. Cinema already exists!");
 			 } else {
+				 add_cinema_name_field.clear();
+
 				 status_label.setText("");
 			 }
 		} catch (Exception e) {
@@ -201,15 +269,16 @@ public class AdminController implements Initializable {
 			e.printStackTrace();
 		}
 			loadTables();
+		 	updateCombos();
 
 	 }
 	 
 	 @FXML void addShowtime(ActionEvent event){
-		 String cinema =  add_showtime_cinema_field.getText();
-		 String movie = add_showtime_movie_field.getText();
+		 String cinema =  add_showtime_cinema_field.getSelectionModel().getSelectedItem().toString();
+		 String movie = add_showtime_movie_field.getSelectionModel().getSelectedItem().toString();
 		 String time = add_showtime_time_field.getSelectionModel().getSelectedItem().toString();
-		 add_showtime_cinema_field.clear();
-		 add_showtime_movie_field.clear();
+//		 add_showtime_cinema_field.getSelectionModel().clearSelection();
+//		 add_showtime_movie_field.getSelectionModel().clearSelection();
 		 add_showtime_time_field.getSelectionModel().clearSelection();
 		 ResultSet rs = null;
 		 ResultSet rs2 = null;
@@ -270,7 +339,7 @@ public class AdminController implements Initializable {
 		
 			try {
 				connect = dataBase.getConnection();
-				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
+				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"' ORDER BY cinema");
 				while (rs.next()) {
 					if(!cinema_list.contains(rs.getString(2)))
 					cinema_list.add(rs.getString(2));
@@ -281,7 +350,7 @@ public class AdminController implements Initializable {
 	    	for(String cin: cinema_list){
 	    		ArrayList<String> showtime_list = new ArrayList<String>();
 	    		formattedString.append(cin+"\n");
-	    		formattedString.append("=================\n");
+	    		formattedString.append("====================\n");
 	    		try {
 					connect = dataBase.getConnection();
 					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
@@ -295,10 +364,14 @@ public class AdminController implements Initializable {
 					e.printStackTrace();
 				}
 	    		showtime_list = sortTimes(showtime_list);
-	    		for(String show: showtime_list){
-					formattedString.append(show+ "\n");
+	    		for(int i = 0; i < showtime_list.size(); i++){
+	    			if(i == showtime_list.size() - 1){
+		    			formattedString.append(showtime_list.get(i));
+	    			} else {
+	    			formattedString.append(showtime_list.get(i)+ ", ");
+	    			}
 	    		}
-	    		formattedString.append("\n");
+	    		formattedString.append("\n\n");
 
 	    	}
 	    	
@@ -312,14 +385,17 @@ public class AdminController implements Initializable {
 		CinemaDetails object =  m;
 		String cinema_name = object.getName();
 		ArrayList<String> movie_list = new ArrayList<String>();
+		ArrayList<String> rating_list = new ArrayList<String>();
 		StringBuilder formattedString = new StringBuilder();
     	Connection connect;
 		ResultSet rs = null;
 		ResultSet rs2 = null;
+		ResultSet rs3 = null;
+
 		
 			try {
 				connect = dataBase.getConnection();
-				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
+				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'ORDER BY movie");
 				while (rs.next()) {
 					if(!movie_list.contains(rs.getString(3))){
 					movie_list.add(rs.getString(3));
@@ -331,14 +407,37 @@ public class AdminController implements Initializable {
 			}
 			
 	    	for(String movie: movie_list){
+	    		
+	    		try {
+					connect = dataBase.getConnection();
+					rs3 = connect.createStatement().executeQuery("SELECT * FROM movie WHERE name = '"+movie+"'");
+					while (rs3.next()) {
+						if(rs3.getString(2) == null){
+							rating_list.add(("NR"));
+
+						} else {
+						rating_list.add((rs3.getString(2)));
+						}
+						}
+			    	}	
+					 catch (Exception e) {
+					e.printStackTrace();
+				}
+	    		
+	    	}
+	    		
+	    		for (int t = 0; t < movie_list.size(); t++){
+	    		
+	    		
+	    		
 	    		ArrayList<String> movie_sort = new ArrayList<String>();
-	    		formattedString.append(movie+"\n");
-	    		formattedString.append("=================\n");	    		
+	    		formattedString.append(movie_list.get(t)+"    "+rating_list.get(t)+"\n");
+	    		formattedString.append("====================\n");	    		
 	    		try {
 					connect = dataBase.getConnection();
 					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
 					while (rs2.next()) {
-						if(rs2.getString(3).equals(movie)){
+						if(rs2.getString(3).equals(movie_list.get(t))){
 							movie_sort.add(rs2.getString(4));
 
 						}
@@ -348,17 +447,76 @@ public class AdminController implements Initializable {
 					e.printStackTrace();
 				}
 	    		movie_sort = sortTimes(movie_sort);
-	    		for(String mov: movie_sort){
-	    			formattedString.append(mov+ "\n");
+	    		for(int i = 0; i < movie_sort.size(); i++){
+	    			if(i == movie_sort.size() - 1){
+		    			formattedString.append(movie_sort.get(i));
+	    			} else {
+	    			formattedString.append(movie_sort.get(i)+ ", ");
+	    			}
 	    		}
-	    		formattedString.append("\n");
-
+	    		formattedString.append("\n\n");
 
 	    	}
 	    	
 	    return formattedString.toString();
 	    		
     }
+	
+//	String rowChosen(CinemaDetails m){
+//		CinemaDetails object =  m;
+//		String cinema_name = object.getName();
+//		ArrayList<String> movie_list = new ArrayList<String>();
+//		StringBuilder formattedString = new StringBuilder();
+//    	Connection connect;
+//		ResultSet rs = null;
+//		ResultSet rs2 = null;
+//		
+//			try {
+//				connect = dataBase.getConnection();
+//				rs = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"' ORDER BY movie");
+//				while (rs.next()) {
+//					if(!movie_list.contains(rs.getString(3))){
+//					movie_list.add(rs.getString(3));
+//					}
+//		    	}	
+//				
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//			
+//	    	for(String movie: movie_list){
+//	    		ArrayList<String> movie_sort = new ArrayList<String>();
+//	    		formattedString.append(movie+"\n");
+//	    		formattedString.append("====================\n");	    		
+//	    		try {
+//					connect = dataBase.getConnection();
+//					rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE cinema = '"+cinema_name+"'");
+//					while (rs2.next()) {
+//						if(rs2.getString(3).equals(movie)){
+//							movie_sort.add(rs2.getString(4));
+//
+//						}
+//			    	}	
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//	    		movie_sort = sortTimes(movie_sort);
+//	    		for(int i = 0; i < movie_sort.size(); i++){
+//	    			if(i == movie_sort.size() - 1){
+//		    			formattedString.append(movie_sort.get(i));
+//	    			} else {
+//	    			formattedString.append(movie_sort.get(i)+ ", ");
+//	    			}
+//	    		}
+//	    		formattedString.append("\n\n");
+//
+//
+//	    	}
+//	    	
+//	    return formattedString.toString();
+//	    		
+//    }
     
 	
 	private ArrayList<String> sortTimes(ArrayList<String> showtime_list) {

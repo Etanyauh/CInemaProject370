@@ -24,21 +24,34 @@ public class SigninController {
     }
 
     @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Label statusLabel;
+    @FXML private PasswordField pass_field;
+    @FXML private Label status_label;
     private Database dataBase = new Database();
 
     
 
     @FXML
-    void customerHandle(ActionEvent event) throws Exception {
+    void cinemaHandle(ActionEvent event) throws Exception {
+    	Current.getSession().tab = "cinema";
+        ViewNavigator.loadScreen(ViewNavigator.CUSTOMER_VIEW);           
+    }
+    
+    @FXML
+    void movieHandle(ActionEvent event) throws Exception {
+    	Current.getSession().tab = "movie";
         ViewNavigator.loadScreen(ViewNavigator.CUSTOMER_VIEW);           
     }
 
     @FXML
     void adminHandle (ActionEvent event) throws NoSuchAlgorithmException {
-    	ViewNavigator.loadScreen(ViewNavigator.ADMIN_SIGNIN_SCREEN);
+    	if(pass_field.getText().equals("admin")){
+    		ViewNavigator.loadScreen(ViewNavigator.ADMIN_VIEW);
+    	} else {
+    		status_label.setText("Incorrect password!");
+    	}
     }
+    
+    
             
 
 

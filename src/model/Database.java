@@ -83,7 +83,7 @@ public class Database {
 			ResultSet rs1 = null;
 			Connection con = getConnection();
 
-			rs1 = con.createStatement().executeQuery("SELECT * FROM cinema WHERE name = '"+name+"' AND x='"+x+"' AND y ='"+y+"'");
+			rs1 = con.createStatement().executeQuery("SELECT * FROM cinema WHERE name = '"+name+"'");
 
 			if(rs1.next()){
 				return false;
@@ -120,8 +120,45 @@ public class Database {
 		}
 		return true;
 	}
+	
+	
+	
+	public ArrayList<String> getMovies(){
+		ArrayList<String> movies_list = new ArrayList<String>();
+		try {
+			 ResultSet rs1 = null;
 
+			 Connection con = getConnection();
+			 rs1 = con.createStatement().executeQuery("SELECT * FROM movie");
+			 while(rs1.next()){
+				 movies_list.add(rs1.getString(1));
+			 }	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return movies_list;
+	}
 
+	
+	public ArrayList<String> getCinemas(){
+		ArrayList<String> cinemas_list = new ArrayList<String>();
+		try {
+			 ResultSet rs1 = null;
+
+			 Connection con = getConnection();
+			 rs1 = con.createStatement().executeQuery("SELECT * FROM cinema");
+			 while(rs1.next()){
+				 cinemas_list.add(rs1.getString(1));
+			 }	
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return cinemas_list;
+	}
 
 	
 	/**

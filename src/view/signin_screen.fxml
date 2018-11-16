@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
@@ -35,14 +37,23 @@
                 <Font name="Arial Black" size="32.0"/>
             </font>
         </Label>
-        
-        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="0"
+         
+    <!--     <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="0"
               GridPane.rowIndex="2" GridPane.columnSpan="2">
-            <children>
-                <Button mnemonicParsing="false" onAction="#customerHandle" text="Customer" prefWidth="110.0"/>
+            <children> -->
+                <Button mnemonicParsing="false" onAction="#movieHandle" text="Movies" prefWidth="110.0" GridPane.columnIndex="0"
+              GridPane.rowIndex="3"/>
+              <Button mnemonicParsing="false" onAction="#cinemaHandle" text="Cinemas" prefWidth="110.0" GridPane.columnIndex="1"
+              GridPane.rowIndex="3"/>
+                <HBox GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4" spacing="10">
+            
                 <Button mnemonicParsing="false" onAction="#adminHandle" text="Administrator" prefWidth="110.0"/>
-            </children>
-        </HBox>
+                <PasswordField fx:id="pass_field" > </PasswordField>
+                </HBox>
+                <Label fx:id="status_label" text="" GridPane.columnIndex="0" GridPane.columnSpan="1"
+              GridPane.rowIndex="5"></Label>
+           <!--  </children>
+        </VBox> -->
 
 
     </children>

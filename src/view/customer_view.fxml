@@ -26,9 +26,8 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
-<BorderPane fx:controller="controller.CustomerController" xmlns:fx="http://javafx.com/fxml" >
-    <top>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
+<VBox fx:controller="controller.CustomerController" xmlns:fx="http://javafx.com/fxml" >
+        <TabPane tabClosingPolicy="UNAVAILABLE" fx:id="tab_pane">
             <tabs>
                 <Tab text="Movies">
 	                <content>
@@ -165,7 +164,8 @@
 			            </GridPane>
                 	</content>
                 </Tab>
+               <Tab fx:id="admin_tab" text="Admin"></Tab>            
             </tabs>
         </TabPane>
-    </top>
-</BorderPane>
+
+</VBox>

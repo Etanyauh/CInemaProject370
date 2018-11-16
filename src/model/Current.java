@@ -5,6 +5,7 @@ public class Current {
 	private static Current session;
 	public String movie;
 	public String cinema;
+	public String tab;
 	
 	
 	private Current(){
@@ -14,7 +15,7 @@ public class Current {
 	public void clearSession(){
 		session.movie = "";
 		session.cinema = "";
-		
+		session.tab ="";
 	}
 	
 	public static synchronized Current getSession() {
