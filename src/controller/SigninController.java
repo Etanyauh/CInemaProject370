@@ -46,6 +46,7 @@ public class SigninController {
     void adminHandle (ActionEvent event) throws NoSuchAlgorithmException {
     	if(pass_field.getText().equals("admin")){
     		ViewNavigator.loadScreen(ViewNavigator.ADMIN_VIEW);
+    		Current.getSession().admin_bool = true;
     	} else {
     		status_label.setText("Incorrect password!");
     	}

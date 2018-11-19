@@ -6,6 +6,7 @@ public class Current {
 	public String movie;
 	public String cinema;
 	public String tab;
+	public boolean admin_bool = false;
 	
 	
 	private Current(){

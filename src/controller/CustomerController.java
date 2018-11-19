@@ -85,7 +85,11 @@ public class CustomerController implements Initializable {
 		
 		admin_tab.setOnSelectionChanged(event -> {
 	        if (admin_tab.isSelected()) {
-	           ViewNavigator.loadScreen(ViewNavigator.SIGN_IN);
+	        	if(Current.getSession().admin_bool == true){
+	        		ViewNavigator.loadScreen(ViewNavigator.ADMIN_VIEW);
+	        	} else{
+	        		ViewNavigator.loadScreen(ViewNavigator.SIGN_IN);
+	        	}
 	        }
 	    });
 		
@@ -161,11 +165,14 @@ public class CustomerController implements Initializable {
 			MovieDetails object =  m;
 			String movie_name = object.getName();
 			ArrayList<String> cinema_list = new ArrayList<String>();
-			
+			ArrayList<String> address_list = new ArrayList<String>();
+
 			StringBuilder formattedString = new StringBuilder();
 	    	Connection connect;
 			ResultSet rs = null;
 			ResultSet rs2 = null;
+			ResultSet rs3 = null;
+
 			
 				try {
 					connect = dataBase.getConnection();
@@ -177,15 +184,34 @@ public class CustomerController implements Initializable {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-		    	for(String cin: cinema_list){
+				
+				for(String cinema: cinema_list){
+		    		
+		    		try {
+						connect = dataBase.getConnection();
+						rs3 = connect.createStatement().executeQuery("SELECT * FROM cinema WHERE name = '"+cinema+"'");
+						while (rs3.next()) {
+							address_list.add(("("+rs3.getString(2)+", "+rs3.getString(3)+")"));
+							}
+				    	}	
+						 catch (Exception e) {
+						e.printStackTrace();
+					}
+		    		
+		    	}
+				
+				
+				
+				
+		    	for(int k = 0; k < cinema_list.size();k++){
 		    		ArrayList<String> showtime_list = new ArrayList<String>();
-		    		formattedString.append(cin+"\n");
+		    		formattedString.append(cinema_list.get(k)+"    "+address_list.get(k)+"\n");
 		    		formattedString.append("====================\n");
 		    		try {
 						connect = dataBase.getConnection();
 						rs2 = connect.createStatement().executeQuery("SELECT * FROM showing WHERE movie = '"+movie_name+"'");
 						while (rs2.next()) {
-							if(rs2.getString(2).equals(cin)){
+							if(rs2.getString(2).equals(cinema_list.get(k))){
 								showtime_list.add(rs2.getString(4));
 							}
 				    	}	
